@@ -1,0 +1,279 @@
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+namespace Mid
+{
+    public class Teachers
+    {
+        public string fio;
+        public List<string> group = new List<string>();
+        public List<string> subjects = new List<string>();
+        public List<string> ListOfStudents = new List<string>();
+        public List<string> ListOfLusers = new List<string>();
+    }
+    public class Student
+    {
+        public string fio;
+        public string group;
+        public List<string> marks = new List<string>();
+    }
+    public class Manager
+    {
+        public string fio;
+        public string job;
+
+        public List<string> OrdersForTeachers = new List<string>();
+        public List<string> OrdersForStudents = new List<string>();
+        public List<string> OrdersForAll = new List<string>();
+
+
+
+        public static int CategoryForOrders()
+        {
+            Console.WriteLine("Выберите на кого распространяется указание: ");
+            Console.WriteLine("1. Для студентов и предподавателей");
+            Console.WriteLine("2. Для предподавателей");
+            Console.WriteLine("3. Для студентов");
+            int a = Convert.ToInt32(Console.ReadLine());
+            Console.Clear();
+            return a;                    // В main поставить if в зависимости от "а" в добавление списка в Manager
+        }
+    }
+    internal class Program
+    {
+        static void Main()
+        {
+            int q = 0;
+            List<Teachers> teachers = new List<Teachers>();
+            List<Student> students = new List<Student>();
+
+            Console.WriteLine("Сколько преподавателей в ВУЗе?");
+            int n = Convert.ToInt32(Console.ReadLine());
+
+            for (int i = 0; i < n; i++)
+            {
+                Teachers t = new Teachers();
+
+                Console.WriteLine("fio");
+                t.fio = Console.ReadLine();
+
+                Console.WriteLine("Введите кол-во groups");
+                int num = Convert.ToInt32(Console.ReadLine());
+
+                for (int j = 0; j < num; j++)
+                {
+                    Console.WriteLine("name of group");
+                    string group = Console.ReadLine();
+                    t.group.Add(group);
+
+                    Console.WriteLine("subjects? ' ' ");
+                    string sub = Console.ReadLine();
+                    t.subjects.Add(sub);
+                    string[] subjects = sub.Split(' ');
+
+
+                    Console.WriteLine("Number of students?");
+                    int stud = Convert.ToInt32(Console.ReadLine());
+                    string spisok = "";
+                    string name = "";
+
+
+                    for (int h = 0; h < stud; h++)
+                    {
+                        Student s = new Student();
+                        Console.WriteLine("Введите ФИО студента");
+                        name = Console.ReadLine();
+
+                        spisok += name;
+                        spisok += "\n";
+                        s.fio = name;
+                        s.group = group;
+
+                        for (int k = 0; k < subjects.Length; k++)
+                        {
+                            Console.WriteLine($"Выставите студенту оценку по предмету: {subjects[k]}");
+                            string mark = Console.ReadLine();
+
+                            if (mark == "-" || Convert.ToInt32(mark) == 2)
+                            {
+                                string lus = group + "\n" + name + "\n" + subjects[k] + " "  + mark;
+
+                                t.ListOfLusers.Add(lus);
+                            }
+
+                            mark += " ";
+                            mark += subjects[k];
+                            s.marks.Add(mark);
+                            Console.Clear();
+                        }
+
+                        students.Add(s);
+                    }
+
+                    t.ListOfStudents.Add(spisok);
+                }
+                teachers.Add(t);
+            }
+
+
+            Console.WriteLine("Введите кол-во управленцев");
+            n = Convert.ToInt32(Console.ReadLine());
+            List<Manager> managers = new List<Manager>();
+
+            for (int i = 0; i < n; i++)
+            {
+                Manager m = new Manager();
+                Console.WriteLine("Введите ФИО");
+                m.fio = Console.ReadLine();
+
+                Console.WriteLine("Введите должность");
+                m.job = Console.ReadLine();
+                managers.Add(m);
+            }
+
+
+
+            while (true)
+            {
+                Console.WriteLine("Выберите пункт меню:");
+                Console.WriteLine("1. Издать указ");
+                Console.WriteLine("2. Посмотреть должников (вход для предподавателя)");
+                Console.WriteLine("3. Посмотреть успеваемость (вход для студента)");
+                Console.WriteLine("4. Посмотреть список указов");
+
+                n = Convert.ToInt32(Console.ReadLine());
+                Console.Clear();
+                string ansfio;
+
+                Console.WriteLine("Ваше ФИО");
+                ansfio = Console.ReadLine();
+
+
+                if (n == 1)
+                {
+                    for (int i = 0; i < managers.Count; i++)
+                    {
+                        if (managers[i].fio == ansfio)
+                        {
+                            int a = Manager.CategoryForOrders();
+                            Console.WriteLine("Добавьте приказ");
+                            string rule = Console.ReadLine();
+                            Console.WriteLine("Добавьте индефикационный номер");
+                            rule += "\n";
+                            rule += "индефикационный номер: " + Console.ReadLine();
+                            rule += "\n" + managers[i].job + " " + managers[i].fio;
+
+                            if (a == 1)
+                                managers[i].OrdersForAll.Add(rule);
+                            else if (a == 2)
+                                managers[i].OrdersForTeachers.Add(rule);
+                            else if (a == 3)
+                                managers[i].OrdersForStudents.Add(rule);
+                            else
+                                Console.WriteLine("Такого пункта нет!");
+                        }
+                    }
+                }
+
+                else if (n == 2)
+                {
+                    for (int i = 0; i < teachers.Count; i++)
+                    {
+                        if (ansfio == teachers[i].fio)
+                        {
+                            for (int j = 0; j < teachers[i].ListOfLusers.Count; j++)
+                            {
+                                Console.WriteLine(teachers[i].ListOfLusers[j].ToString());
+                            }
+                        }
+                    }
+                }
+
+                else if (n == 3)
+                {
+                    for (int i = 0; i < students.Count; i++)
+                    {
+                        if (ansfio == students[i].fio)
+                        {
+                            for (int j = 0; j < students[i].marks.Count; j++)
+                            {
+                                Console.WriteLine(students[i].marks[j].ToString());
+                            }
+                        }
+                    }
+                }
+
+                else if (n == 4)
+                {
+                    Console.WriteLine("Какую категорию указов хотите посмотреть?");
+                    Console.WriteLine("1. Для сотрудников и студентов");
+                    Console.WriteLine("2. Для предподавательсокого состава");
+                    Console.WriteLine("3. Для студентов");
+                    int ans = Convert.ToInt32(Console.ReadLine());
+                    Console.Clear();
+
+                    if (ans == 1)
+                    {
+                        for (int i = 0; i < managers.Count; i++)
+                        {
+                            for (int j = 0; j < managers[i].OrdersForAll.Count; j++)
+                            {
+                                Console.WriteLine($"{managers[i].OrdersForAll[j]}\n");
+                            }
+                        }
+                    }
+
+                    else if (ans == 2)
+                    {
+                        for (int i = 0; i < managers.Count; i++)
+                        {
+                            for (int j = 0; j < managers[i].OrdersForTeachers.Count; j++)
+                            {
+                                Console.WriteLine($"{managers[i].OrdersForTeachers[j]}\n");
+                            }
+                        }
+                    }
+
+                    else if (ans == 3)
+                    {
+                        for (int i = 0; i < managers.Count; i++)
+                        {
+                            for (int j = 0; j < managers[i].OrdersForStudents.Count; j++)
+                            {
+                                Console.WriteLine($"{managers[i].OrdersForStudents[j]}\n");
+                            }
+                        }
+                    }
+                }
+
+
+                BackToMenu();
+                ConsoleKeyInfo tyn = Console.ReadKey(true);
+                if (tyn.Key == ConsoleKey.F1)
+                {
+                    q++;
+                    break;
+                }
+
+                else
+                    Console.Clear();
+
+            }
+
+            Console.Clear();
+            Console.WriteLine("Вы завершили программу! ");
+
+        }
+
+        public static void BackToMenu()
+        {
+            Console.SetCursorPosition(35, 25);
+            Console.WriteLine("Чтобы венуться к меню, нажмите любую клавишу");
+            Console.SetCursorPosition(34, 26);
+            Console.Write("Или если хотите завершить программу, нажмите F1 ");
+        }
+    }
+}
